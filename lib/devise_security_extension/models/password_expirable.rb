@@ -13,8 +13,14 @@ module Devise
 
       # is an password change required?
       def need_change_password?
-        if self.class.expire_password_after.is_a? Fixnum or self.class.expire_password_after.is_a? Float
-          self.password_changed_at.nil? or self.password_changed_at < self.class.expire_password_after.ago
+        expire_password_after = if self.class.expire_password_source == :file
+          self.expire_password_after
+        else
+          self.class.expire_password_after
+        end
+
+        if expire_password_after.is_a? Fixnum or expire_password_after.is_a? Float
+          self.password_changed_at.nil? or self.password_changed_at < expire_password_after.ago
         else
           false
         end
@@ -22,7 +28,13 @@ module Devise
 
       # set a fake datetime so a password change is needed and save the record
       def need_change_password!
-        if self.class.expire_password_after.is_a? Fixnum or self.class.expire_password_after.is_a? Float
+        expire_password_after = if self.class.expire_password_source == :file
+          self.expire_password_after
+        else
+          self.class.expire_password_after
+        end
+
+        if expire_password_after.is_a? Fixnum or expire_password_after.is_a? Float
           need_change_password
           self.save(:validate => false)
         end
@@ -30,7 +42,13 @@ module Devise
 
       # set a fake datetime so a password change is needed
       def need_change_password
-        if self.class.expire_password_after.is_a? Fixnum or self.class.expire_password_after.is_a? Float
+        expire_password_after = if self.class.expire_password_source == :file
+          self.expire_password_after
+        else
+          self.class.expire_password_after
+        end
+
+        if expire_password_after.is_a? Fixnum or expire_password_after.is_a? Float
           self.password_changed_at = self.class.expire_password_after.ago
         end
 

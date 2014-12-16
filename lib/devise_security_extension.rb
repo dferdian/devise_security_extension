@@ -6,6 +6,9 @@ require 'devise'
 
 module Devise
 
+  mattr_accessor :expire_password_source
+  @@expire_password_source = :file
+
   # Should the password expire (e.g 3.months)
   mattr_accessor :expire_password_after
   @@expire_password_after = 3.months
